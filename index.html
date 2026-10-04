@@ -7,451 +7,1766 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="TaskAI">
-
+  <link rel="manifest" href="manifest.json">
   <title>TaskAI</title>
-
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-        "SF Pro Text", Arial, sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        Arial,
+        sans-serif;
       background: #f5f7fb;
       color: #111827;
       min-height: 100vh;
       padding-bottom: 40px;
     }
-
+    button,
+    input,
+    select {
+      font: inherit;
+    }
     .header {
       background: #111827;
       color: white;
-      padding: 55px 22px 25px;
-      border-radius: 0 0 24px 24px;
+      padding:
+        calc(50px + env(safe-area-inset-top))
+        22px
+        24px;
+      border-radius: 0 0 26px 26px;
     }
-
-    .header h1 {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-
-    .header p {
-      color: #cbd5e1;
-      font-size: 15px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .input-card {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
-      margin-bottom: 22px;
-    }
-
-    .task-input {
-      width: 100%;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      outline: none;
-      font-size: 17px;
-      padding: 13px;
-      background: #f9fafb;
-      color: #111827;
-      margin-bottom: 14px;
-    }
-
-    .task-input:focus {
-      border-color: #9ca3af;
-    }
-
-    .time-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #6b7280;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .time-row {
+    .header-top {
       display: flex;
-      gap: 10px;
+      justify-content: space-between;
       align-items: center;
     }
-
-    .time-input {
-      flex: 1;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 16px;
-      background: #f9fafb;
-      color: #111827;
+    .header h1 {
+      font-size: 32px;
+      font-weight: 750;
     }
-
-    .arrow {
-      color: #9ca3af;
-      font-weight: 600;
+    .header p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 5px;
     }
-
-    .add-button {
-      width: 100%;
+    .settings-button {
       border: none;
-      border-radius: 12px;
-      padding: 13px;
-      margin-top: 15px;
-      background: #111827;
+      background: #374151;
       color: white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      font-size: 20px;
     }
-
-    .add-button:active {
-      transform: scale(0.98);
+    .container {
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 18px;
     }
-
-    .section-title {
-      font-size: 21px;
-      font-weight: 700;
-      margin-bottom: 12px;
+    /* DASHBOARD */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
     }
-
-    .empty {
-      text-align: center;
-      padding: 35px 15px;
-      color: #9ca3af;
-      background: white;
-      border-radius: 18px;
-    }
-
-    .task {
+    .stat {
       background: white;
       border-radius: 18px;
       padding: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 5px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 750;
+    }
+    /* TABS */
+    .tabs {
+      display: flex;
+      background: #e5e7eb;
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 18px;
+    }
+    .tab {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px;
+      border-radius: 11px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+    .tab.active {
+      background: white;
+      color: #111827;
+      box-shadow: 0 2px 7px rgba(0,0,0,.06);
+    }
+    /* CARDS */
+    .card {
+      background: white;
+      border-radius: 19px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    /* TASK CREATOR */
+    .task-input {
+      width: 100%;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 13px;
+      outline: none;
+      font-size: 16px;
       margin-bottom: 12px;
+    }
+    .task-input:focus {
+      border-color: #9ca3af;
+    }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 650;
+      color: #6b7280;
+      margin-bottom: 5px;
+    }
+    .date-time-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 9px;
+    }
+    .date-input,
+    .time-input,
+    .select-input {
+      width: 100%;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      border-radius: 11px;
+      padding: 11px;
+      outline: none;
+      font-size: 14px;
+    }
+    .add-button {
+      width: 100%;
+      border: none;
+      background: #111827;
+      color: white;
+      border-radius: 12px;
+      padding: 13px;
+      margin-top: 14px;
+      font-weight: 700;
+    }
+    /* TASKS */
+    .task {
+      background: white;
+      border-radius: 17px;
+      padding: 15px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 13px;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+      gap: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
     }
-
     .check {
-      width: 25px;
-      height: 25px;
+      width: 26px;
+      height: 26px;
       border: 2px solid #cbd5e1;
       border-radius: 50%;
       flex-shrink: 0;
-      cursor: pointer;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      cursor: pointer;
       font-size: 14px;
     }
-
     .check.completed {
       background: #111827;
       border-color: #111827;
       color: white;
     }
-
     .task-content {
       flex: 1;
       min-width: 0;
     }
-
     .task-name {
-      font-size: 17px;
-      font-weight: 600;
-      word-wrap: break-word;
+      font-size: 16px;
+      font-weight: 650;
+      word-break: break-word;
     }
-
-    .task-time {
-      font-size: 14px;
+    .task-info {
       color: #6b7280;
+      font-size: 13px;
       margin-top: 5px;
     }
-
-    .completed .task-name {
+    .task.completed .task-name {
       text-decoration: line-through;
       color: #9ca3af;
     }
-
-    .delete {
+    .task-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .icon-button {
       border: none;
       background: transparent;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       color: #9ca3af;
-      font-size: 22px;
-      cursor: pointer;
-      padding: 5px;
+      font-size: 18px;
     }
-
-    .delete:hover {
-      color: #ef4444;
+    .icon-button:active {
+      background: #f3f4f6;
     }
-
-    .install-card {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      margin-top: 22px;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    /* GOALS */
+    .progress-container {
+      background: #e5e7eb;
+      height: 10px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 10px 0;
     }
-
-    .install-card h3 {
-      margin-bottom: 8px;
-      font-size: 17px;
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: #111827;
+      transition: width .3s ease;
     }
-
-    .install-card p {
+    .goal-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
       color: #6b7280;
-      line-height: 1.5;
+    }
+    /* REWARDS */
+    .reward {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .reward:last-child {
+      border-bottom: none;
+    }
+    .reward-icon {
+      font-size: 25px;
+    }
+    .reward-info {
+      flex: 1;
+    }
+    .reward-name {
+      font-weight: 650;
+    }
+    .reward-cost {
+      color: #6b7280;
+      font-size: 13px;
+      margin-top: 3px;
+    }
+    .redeem-button {
+      border: none;
+      background: #111827;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .redeem-button:disabled {
+      opacity: .35;
+    }
+    /* COACH */
+    .coach {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .coach-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #111827;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .coach-message {
+      background: #f3f4f6;
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.45;
       font-size: 14px;
+    }
+    /* EMPTY */
+    .empty {
+      background: white;
+      border-radius: 17px;
+      padding: 28px;
+      text-align: center;
+      color: #9ca3af;
+    }
+    /* SETTINGS */
+    .setting-row {
+      padding: 13px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+    .setting-title {
+      font-weight: 650;
+      margin-bottom: 5px;
+    }
+    .setting-description {
+      color: #9ca3af;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .danger-button {
+      width: 100%;
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #b91c1c;
+      border-radius: 11px;
+      padding: 11px;
+      font-weight: 650;
+    }
+    .hidden {
+      display: none;
+    }
+    @media (max-width: 430px) {
+      .date-time-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
-
 <body>
-
-  <div class="header">
-    <h1>TaskAI</h1>
-    <p>Your simple personal task assistant</p>
-  </div>
-
-  <main class="container">
-
-    <div class="input-card">
-
-      <input
-        id="taskInput"
-        class="task-input"
-        type="text"
-        placeholder="What do you need to do?"
-        autocomplete="off"
+  <header class="header">
+    <div class="header-top">
+      <div>
+        <h1>TaskAI</h1>
+        <p>Your personal accountability coach</p>
+      </div>
+      <button
+        class="settings-button"
+        onclick="showTab('settings')"
       >
-
-      <label class="time-label">Start Time</label>
-      <input
-        id="startTime"
-        class="time-input"
-        type="time"
-      >
-
-      <div style="height: 12px;"></div>
-
-      <label class="time-label">End Time</label>
-      <input
-        id="endTime"
-        class="time-input"
-        type="time"
-      >
-
-      <button class="add-button" onclick="addTask()">
-        Add Task
+        ⚙️
       </button>
-
     </div>
-
-    <h2 class="section-title">Your Schedule</h2>
-
-    <div id="taskList"></div>
-
-    <div class="install-card">
-      <h3>📱 Add TaskAI to your Home Screen</h3>
-      <p>
-        In Safari, tap the Share button and choose
-        <strong>Add to Home Screen</strong>.
-      </p>
+  </header>
+  <main class="container">
+    <!-- DASHBOARD -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">🔥 STREAK</div>
+        <div class="stat-value" id="streak">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">⭐ XP</div>
+        <div class="stat-value" id="xp">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">📋 TODAY</div>
+        <div class="stat-value" id="todayProgress">0%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">🏆 LEVEL</div>
+        <div class="stat-value" id="level">1</div>
+      </div>
     </div>
-
+    <!-- NAVIGATION -->
+    <div class="tabs">
+      <button
+        class="tab active"
+        id="tabTasks"
+        onclick="showTab('tasks')"
+      >
+        Tasks
+      </button>
+      <button
+        class="tab"
+        id="tabGoals"
+        onclick="showTab('goals')"
+      >
+        Goals
+      </button>
+      <button
+        class="tab"
+        id="tabRewards"
+        onclick="showTab('rewards')"
+      >
+        Rewards
+      </button>
+      <button
+        class="tab"
+        id="tabSettings"
+        onclick="showTab('settings')"
+      >
+        Settings
+      </button>
+    </div>
+    <!-- TASKS -->
+    <section id="tasksTab">
+      <div class="card">
+        <div class="card-title">
+          Add a Task
+        </div>
+        <input
+          id="taskInput"
+          class="task-input"
+          type="text"
+          placeholder="What do you need to do?"
+        >
+        <div class="date-time-grid">
+          <div>
+            <label class="field-label">
+              Date
+            </label>
+            <input
+              id="taskDate"
+              class="date-input"
+              type="date"
+            >
+          </div>
+          <div>
+            <label class="field-label">
+              Start
+            </label>
+            <input
+              id="startTime"
+              class="time-input"
+              type="time"
+            >
+          </div>
+          <div>
+            <label class="field-label">
+              End
+            </label>
+            <input
+              id="endTime"
+              class="time-input"
+              type="time"
+            >
+          </div>
+        </div>
+        <button
+          class="add-button"
+          onclick="addTask()"
+        >
+          + Add Task
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          Today's Schedule
+        </div>
+        <div id="taskList"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          🧠 Accountability Coach
+        </div>
+        <div class="coach">
+          <div class="coach-avatar">
+            🤖
+          </div>
+          <div
+            class="coach-message"
+            id="coachMessage"
+          >
+            Add your first task and let's get started.
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- GOALS -->
+    <section
+      id="goalsTab"
+      class="hidden"
+    >
+      <div class="card">
+        <div class="card-title">
+          🎯 Weekly Goal
+        </div>
+        <div class="goal-text">
+          <span id="goalProgressText">
+            0 / 20 tasks
+          </span>
+          <span id="goalPercent">
+            0%
+          </span>
+        </div>
+        <div class="progress-container">
+          <div
+            class="progress"
+            id="goalProgress"
+          ></div>
+        </div>
+        <label class="field-label">
+          Weekly task target
+        </label>
+        <input
+          id="weeklyGoal"
+          class="date-input"
+          type="number"
+          min="1"
+          value="20"
+          onchange="updateGoal()"
+        >
+      </div>
+      <div class="card">
+        <div class="card-title">
+          📈 Your Progress
+        </div>
+        <p
+          id="goalMessage"
+          style="color:#6b7280; line-height:1.5;"
+        >
+          Complete tasks to start building your weekly progress.
+        </p>
+      </div>
+    </section>
+    <!-- REWARDS -->
+    <section
+      id="rewardsTab"
+      class="hidden"
+    >
+      <div class="card">
+        <div class="card-title">
+          🏆 Your Rewards
+        </div>
+        <div id="rewardList"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          ⭐ How to Earn XP
+        </div>
+        <p style="line-height:1.7; color:#6b7280;">
+          Complete a task on time: <strong>+10 XP</strong><br>
+          Complete every task today: <strong>+50 XP</strong><br>
+          Complete a weekly goal: <strong>+100 XP</strong><br>
+          3-day streak: <strong>+100 XP</strong><br>
+          7-day streak: <strong>+250 XP</strong>
+        </p>
+      </div>
+    </section>
+    <!-- SETTINGS -->
+    <section
+      id="settingsTab"
+      class="hidden"
+    >
+      <div class="card">
+        <div class="card-title">
+          ⚙️ Accountability Settings
+        </div>
+        <div class="setting-row">
+          <div class="setting-title">
+            Reminder interval
+          </div>
+          <div class="setting-description">
+            How often TaskAI checks on an unfinished task.
+          </div>
+          <select
+            id="reminderInterval"
+            class="select-input"
+            onchange="saveSettings()"
+          >
+            <option value="60">1 hour</option>
+            <option value="120" selected>2 hours</option>
+            <option value="180">3 hours</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div class="setting-title">
+            Maximum reminders
+          </div>
+          <div class="setting-description">
+            Number of missed check-ins before escalation.
+          </div>
+          <select
+            id="maxReminders"
+            class="select-input"
+            onchange="saveSettings()"
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div class="setting-title">
+            Coach personality
+          </div>
+          <div class="setting-description">
+            Choose how TaskAI talks to you.
+          </div>
+          <select
+            id="coachStyle"
+            class="select-input"
+            onchange="saveSettings()"
+          >
+            <option value="motivational">
+              💪 Motivational
+            </option>
+            <option value="strict">
+              🧠 Strict
+            </option>
+            <option value="funny">
+              😂 Funny
+            </option>
+            <option value="tars">
+              🤖 TARS
+            </option>
+            <option value="roast">
+              😈 Roast
+            </option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div class="setting-title">
+            Quiet hours
+          </div>
+          <div class="setting-description">
+            No accountability notifications during this time.
+          </div>
+          <div class="date-time-grid">
+            <input
+              id="quietStart"
+              class="time-input"
+              type="time"
+              value="22:00"
+              onchange="saveSettings()"
+            >
+            <input
+              id="quietEnd"
+              class="time-input"
+              type="time"
+              value="07:00"
+              onchange="saveSettings()"
+            >
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          🔔 Notifications
+        </div>
+        <p
+          id="notificationStatus"
+          style="color:#6b7280; line-height:1.5; margin-bottom:12px;"
+        >
+          Notification permission has not been requested yet.
+        </p>
+        <button
+          class="add-button"
+          onclick="requestNotifications()"
+        >
+          Enable Notifications
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          ⚠️ Reset App
+        </div>
+        <p style="color:#9ca3af; margin-bottom:12px;">
+          This permanently deletes your tasks, XP, streaks,
+          goals and settings from this device.
+        </p>
+        <button
+          class="danger-button"
+          onclick="resetApp()"
+        >
+          Reset Everything
+        </button>
+      </div>
+    </section>
   </main>
-
   <script>
-    const taskInput = document.getElementById("taskInput");
-    const startTime = document.getElementById("startTime");
-    const endTime = document.getElementById("endTime");
-    const taskList = document.getElementById("taskList");
-
-    let tasks = JSON.parse(localStorage.getItem("taskai_tasks")) || [];
-
+    /* =========================
+       DATA
+    ========================= */
+    let tasks =
+      JSON.parse(
+        localStorage.getItem("taskai_tasks")
+      ) || [];
+    let xp =
+      Number(
+        localStorage.getItem("taskai_xp")
+      ) || 0;
+    let streak =
+      Number(
+        localStorage.getItem("taskai_streak")
+      ) || 0;
+    let settings =
+      JSON.parse(
+        localStorage.getItem("taskai_settings")
+      ) || {
+        reminderInterval: 120,
+        maxReminders: 3,
+        coachStyle: "motivational",
+        quietStart: "22:00",
+        quietEnd: "07:00"
+      };
+    let weeklyGoal =
+      Number(
+        localStorage.getItem("taskai_goal")
+      ) || 20;
+    let lastCompletedDay =
+      localStorage.getItem(
+        "taskai_last_completed_day"
+      ) || "";
+    /* =========================
+       SAVE
+    ========================= */
     function saveTasks() {
-      localStorage.setItem("taskai_tasks", JSON.stringify(tasks));
+      localStorage.setItem(
+        "taskai_tasks",
+        JSON.stringify(tasks)
+      );
     }
-
+    function saveXP() {
+      localStorage.setItem(
+        "taskai_xp",
+        xp
+      );
+    }
+    function saveStreak() {
+      localStorage.setItem(
+        "taskai_streak",
+        streak
+      );
+    }
+    function saveSettings() {
+      settings.reminderInterval =
+        Number(
+          document.getElementById(
+            "reminderInterval"
+          ).value
+        );
+      settings.maxReminders =
+        Number(
+          document.getElementById(
+            "maxReminders"
+          ).value
+        );
+      settings.coachStyle =
+        document.getElementById(
+          "coachStyle"
+        ).value;
+      settings.quietStart =
+        document.getElementById(
+          "quietStart"
+        ).value;
+      settings.quietEnd =
+        document.getElementById(
+          "quietEnd"
+        ).value;
+      localStorage.setItem(
+        "taskai_settings",
+        JSON.stringify(settings)
+      );
+      updateCoach();
+    }
+    /* =========================
+       DATE HELPERS
+    ========================= */
+    function todayString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month =
+        String(
+          now.getMonth() + 1
+        ).padStart(2, "0");
+      const day =
+        String(
+          now.getDate()
+        ).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+    function formatDate(date) {
+      const d =
+        new Date(
+          date + "T12:00:00"
+        );
+      return d.toLocaleDateString(
+        undefined,
+        {
+          weekday: "short",
+          month: "short",
+          day: "numeric"
+        }
+      );
+    }
     function formatTime(time) {
-
       if (!time) {
-        return "No time set";
+        return "";
       }
-
-      const parts = time.split(":");
-      let hour = parseInt(parts[0]);
-      const minute = parts[1];
-
-      const ampm = hour >= 12 ? "PM" : "AM";
-
+      const parts =
+        time.split(":");
+      let hour =
+        Number(parts[0]);
+      const minute =
+        parts[1];
+      const ampm =
+        hour >= 12 ? "PM" : "AM";
       if (hour === 0) {
         hour = 12;
-      } else if (hour > 12) {
+      }
+      if (hour > 12) {
         hour -= 12;
       }
-
-      return hour + ":" + minute + " " + ampm;
+      return `${hour}:${minute} ${ampm}`;
     }
-
-    function renderTasks() {
-
-      taskList.innerHTML = "";
-
-      if (tasks.length === 0) {
-
-        taskList.innerHTML = `
-          <div class="empty">
-            No tasks yet.<br>
-            Add your first task above.
-          </div>
-        `;
-
-        return;
-      }
-
-      tasks.sort(function(a, b) {
-        return a.startTime.localeCompare(b.startTime);
-      });
-
-      tasks.forEach(function(task, index) {
-
-        const taskElement = document.createElement("div");
-
-        taskElement.className =
-          task.completed ? "task completed" : "task";
-
-        taskElement.innerHTML = `
-          <div
-            class="check ${task.completed ? "completed" : ""}"
-            onclick="toggleTask(${index})"
-          >
-            ${task.completed ? "✓" : ""}
-          </div>
-
-          <div class="task-content">
-
-            <div class="task-name">
-              ${escapeHTML(task.name)}
-            </div>
-
-            <div class="task-time">
-              🕐 ${formatTime(task.startTime)}
-              →
-              ${formatTime(task.endTime)}
-            </div>
-
-          </div>
-
-          <button
-            class="delete"
-            onclick="deleteTask(${index})"
-          >
-            ×
-          </button>
-        `;
-
-        taskList.appendChild(taskElement);
-      });
-    }
-
+    /* =========================
+       TASKS
+    ========================= */
     function addTask() {
-
-      const name = taskInput.value.trim();
-      const start = startTime.value;
-      const end = endTime.value;
-
-      if (name === "") {
-        alert("Please enter a task.");
+      const name =
+        document
+          .getElementById("taskInput")
+          .value
+          .trim();
+      const date =
+        document
+          .getElementById("taskDate")
+          .value;
+      const start =
+        document
+          .getElementById("startTime")
+          .value;
+      const end =
+        document
+          .getElementById("endTime")
+          .value;
+      if (!name) {
+        alert(
+          "Please enter a task."
+        );
         return;
       }
-
-      if (start === "") {
-        alert("Please choose a start time.");
+      if (!date) {
+        alert(
+          "Please choose a date."
+        );
         return;
       }
-
-      if (end === "") {
-        alert("Please choose an end time.");
+      if (!start || !end) {
+        alert(
+          "Please choose a start and end time."
+        );
         return;
       }
-
       if (end <= start) {
-        alert("The end time must be after the start time.");
+        alert(
+          "The end time must be after the start time."
+        );
         return;
       }
-
-      const newTask = {
-        name: name,
-        startTime: start,
-        endTime: end,
-        completed: false
+      const task = {
+        id:
+          Date.now(),
+        name:
+          name,
+        date:
+          date,
+        startTime:
+          start,
+        endTime:
+          end,
+        completed:
+          false,
+        reminders:
+          0,
+        lastReminder:
+          null
       };
-
-      tasks.push(newTask);
-
+      tasks.push(task);
       saveTasks();
-
-      taskInput.value = "";
-      startTime.value = "";
-      endTime.value = "";
-
+      document
+        .getElementById("taskInput")
+        .value = "";
+      document
+        .getElementById("startTime")
+        .value = "";
+      document
+        .getElementById("endTime")
+        .value = "";
       renderTasks();
+      updateDashboard();
+      updateCoach();
     }
-
-    function toggleTask(index) {
-
-      tasks[index].completed =
-        !tasks[index].completed;
-
+    function completeTask(id) {
+      const task =
+        tasks.find(
+          t => t.id === id
+        );
+      if (!task || task.completed) {
+        return;
+      }
+      task.completed = true;
+      task.completedAt =
+        new Date().toISOString();
+      /* XP */
+      xp += 10;
+      /* Update streak */
+      updateStreak();
+      /* Save */
       saveTasks();
-
+      saveXP();
       renderTasks();
+      updateDashboard();
+      updateCoach();
+      checkDailyBonus();
+      checkWeeklyGoal();
     }
-
-    function deleteTask(index) {
-
-      tasks.splice(index, 1);
-
+    function toggleTask(id) {
+      const task =
+        tasks.find(
+          t => t.id === id
+        );
+      if (!task) {
+        return;
+      }
+      if (task.completed) {
+        task.completed = false;
+        saveTasks();
+        renderTasks();
+        updateDashboard();
+        updateCoach();
+        return;
+      }
+      completeTask(id);
+    }
+    function deleteTask(id) {
+      tasks =
+        tasks.filter(
+          task => task.id !== id
+        );
       saveTasks();
-
       renderTasks();
+      updateDashboard();
     }
-
+    function renderTasks() {
+      const list =
+        document.getElementById(
+          "taskList"
+        );
+      let todayTasks =
+        tasks.filter(
+          task =>
+            task.date === todayString()
+        );
+      todayTasks.sort(
+        (a, b) =>
+          a.startTime.localeCompare(
+            b.startTime
+          )
+      );
+      if (
+        todayTasks.length === 0
+      ) {
+        list.innerHTML = `
+          <div class="empty">
+            No tasks scheduled for today.
+          </div>
+        `;
+        return;
+      }
+      list.innerHTML = "";
+      todayTasks.forEach(
+        task => {
+          const element =
+            document.createElement(
+              "div"
+            );
+          element.className =
+            "task" +
+            (
+              task.completed
+                ? " completed"
+                : ""
+            );
+          element.innerHTML = `
+            <div
+              class="check ${
+                task.completed
+                  ? "completed"
+                  : ""
+              }"
+              onclick="toggleTask(${task.id})"
+            >
+              ${
+                task.completed
+                  ? "✓"
+                  : ""
+              }
+            </div>
+            <div class="task-content">
+              <div class="task-name">
+                ${escapeHTML(task.name)}
+              </div>
+              <div class="task-info">
+                ${formatTime(task.startTime)}
+                →
+                ${formatTime(task.endTime)}
+              </div>
+            </div>
+            <div class="task-actions">
+              <button
+                class="icon-button"
+                onclick="deleteTask(${task.id})"
+              >
+                ×
+              </button>
+            </div>
+          `;
+          list.appendChild(
+            element
+          );
+        }
+      );
+    }
+    /* =========================
+       XP
+    ========================= */
+    function getLevel() {
+      if (xp >= 3000) return 5;
+      if (xp >= 1500) return 4;
+      if (xp >= 750) return 3;
+      if (xp >= 250) return 2;
+      return 1;
+    }
+    function checkDailyBonus() {
+      const today =
+        todayString();
+      const todayTasks =
+        tasks.filter(
+          t =>
+            t.date === today
+        );
+      if (
+        todayTasks.length > 0 &&
+        todayTasks.every(
+          t => t.completed
+        )
+      ) {
+        const key =
+          "taskai_daily_bonus_" +
+          today;
+        if (
+          !localStorage.getItem(key)
+        ) {
+          xp += 50;
+          localStorage.setItem(
+            key,
+            "true"
+          );
+          saveXP();
+          alert(
+            "🎉 All today's tasks are complete! +50 XP"
+          );
+        }
+      }
+    }
+    function updateStreak() {
+      const today =
+        todayString();
+      if (
+        lastCompletedDay === today
+      ) {
+        return;
+      }
+      const yesterdayDate =
+        new Date();
+      yesterdayDate.setDate(
+        yesterdayDate.getDate() - 1
+      );
+      const yesterday =
+        yesterdayDate
+          .toISOString()
+          .split("T")[0];
+      if (
+        lastCompletedDay === yesterday
+      ) {
+        streak++;
+      } else {
+        streak = 1;
+      }
+      lastCompletedDay =
+        today;
+      localStorage.setItem(
+        "taskai_last_completed_day",
+        lastCompletedDay
+      );
+      saveStreak();
+      if (streak === 3) {
+        xp += 100;
+        saveXP();
+        alert(
+          "🔥 3-day streak! +100 XP"
+        );
+      }
+      if (streak === 7) {
+        xp += 250;
+        saveXP();
+        alert(
+          "🔥🔥 7-day streak! +250 XP"
+        );
+      }
+    }
+    /* =========================
+       GOALS
+    ========================= */
+    function updateGoal() {
+      weeklyGoal =
+        Number(
+          document
+            .getElementById(
+              "weeklyGoal"
+            )
+            .value
+        ) || 20;
+      localStorage.setItem(
+        "taskai_goal",
+        weeklyGoal
+      );
+      updateGoalDisplay();
+    }
+    function getWeekTasks() {
+      const now =
+        new Date();
+      const day =
+        now.getDay();
+      const start =
+        new Date(now);
+      start.setDate(
+        now.getDate() - day
+      );
+      start.setHours(
+        0, 0, 0, 0
+      );
+      const end =
+        new Date(start);
+      end.setDate(
+        start.getDate() + 7
+      );
+      return tasks.filter(
+        task => {
+          const date =
+            new Date(
+              task.date +
+              "T12:00:00"
+            );
+          return (
+            date >= start &&
+            date < end &&
+            task.completed
+          );
+        }
+      );
+    }
+    function updateGoalDisplay() {
+      const completed =
+        getWeekTasks().length;
+      const percentage =
+        Math.min(
+          100,
+          Math.round(
+            (
+              completed /
+              weeklyGoal
+            ) * 100
+          )
+        );
+      document
+        .getElementById(
+          "goalProgress"
+        )
+        .style.width =
+        percentage + "%";
+      document
+        .getElementById(
+          "goalProgressText"
+        )
+        .textContent =
+        `${completed} / ${weeklyGoal} tasks`;
+      document
+        .getElementById(
+          "goalPercent"
+        )
+        .textContent =
+        percentage + "%";
+      const message =
+        document.getElementById(
+          "goalMessage"
+        );
+      if (percentage >= 100) {
+        message.textContent =
+          "🏆 Weekly goal complete! You earned +100 XP.";
+      } else if (percentage >= 75) {
+        message.textContent =
+          "🔥 You're almost there. Keep going.";
+      } else if (percentage >= 50) {
+        message.textContent =
+          "💪 You're halfway there. Keep the momentum.";
+      } else {
+        message.textContent =
+          "Start completing tasks to build your weekly goal.";
+      }
+    }
+    function checkWeeklyGoal() {
+      const completed =
+        getWeekTasks().length;
+      if (
+        completed >= weeklyGoal
+      ) {
+        const week =
+          getWeekKey();
+        const key =
+          "taskai_goal_bonus_" +
+          week;
+        if (
+          !localStorage.getItem(key)
+        ) {
+          xp += 100;
+          localStorage.setItem(
+            key,
+            "true"
+          );
+          saveXP();
+          alert(
+            "🏆 Weekly goal achieved! +100 XP"
+          );
+        }
+      }
+    }
+    function getWeekKey() {
+      const now =
+        new Date();
+      const start =
+        new Date(now);
+      start.setDate(
+        now.getDate() -
+        now.getDay()
+      );
+      return start
+        .toISOString()
+        .split("T")[0];
+    }
+    /* =========================
+       REWARDS
+    ========================= */
+    const rewards = [
+      {
+        icon: "🎮",
+        name: "1 hour of gaming",
+        cost: 500
+      },
+      {
+        icon: "🍿",
+        name: "Movie night",
+        cost: 750
+      },
+      {
+        icon: "😎",
+        name: "Free evening",
+        cost: 1000
+      },
+      {
+        icon: "🏆",
+        name: "Choose your own reward",
+        cost: 1500
+      }
+    ];
+    function renderRewards() {
+      const list =
+        document.getElementById(
+          "rewardList"
+        );
+      list.innerHTML = "";
+      rewards.forEach(
+        (reward, index) => {
+          const element =
+            document.createElement(
+              "div"
+            );
+          element.className =
+            "reward";
+          element.innerHTML = `
+            <div class="reward-icon">
+              ${reward.icon}
+            </div>
+            <div class="reward-info">
+              <div class="reward-name">
+                ${reward.name}
+              </div>
+              <div class="reward-cost">
+                ${reward.cost} XP
+              </div>
+            </div>
+            <button
+              class="redeem-button"
+              ${
+                xp < reward.cost
+                  ? "disabled"
+                  : ""
+              }
+              onclick="redeemReward(${index})"
+            >
+              Redeem
+            </button>
+          `;
+          list.appendChild(
+            element
+          );
+        }
+      );
+    }
+    function redeemReward(index) {
+      const reward =
+        rewards[index];
+      if (
+        xp < reward.cost
+      ) {
+        return;
+      }
+      const confirmed =
+        confirm(
+          `Redeem ${reward.name} for ${reward.cost} XP?`
+        );
+      if (!confirmed) {
+        return;
+      }
+      xp -= reward.cost;
+      saveXP();
+      updateDashboard();
+      renderRewards();
+      alert(
+        `🎉 Reward redeemed: ${reward.name}`
+      );
+    }
+    /* =========================
+       COACH
+    ========================= */
+    function updateCoach() {
+      const message =
+        document.getElementById(
+          "coachMessage"
+        );
+      const incomplete =
+        tasks.filter(
+          t =>
+            t.date === todayString() &&
+            !t.completed
+        );
+      if (
+        incomplete.length === 0
+      ) {
+        message.textContent =
+          "🎉 Nothing left on today's schedule. Nice work.";
+        return;
+      }
+      const next =
+        incomplete.sort(
+          (a, b) =>
+            a.startTime.localeCompare(
+              b.startTime
+            )
+        )[0];
+      const styles = {
+        motivational:
+          `You've got this. Your next task is ${next.name}. Start strong and get it done.`,
+        strict:
+          `Your next task is ${next.name}. No unnecessary procrastination. Get started.`,
+        funny:
+          `👀 ${next.name} is sitting there waiting for you. It has been waiting patiently.`,
+        tars:
+          `Task identified: ${next.name}. Probability of procrastination: unacceptable.`,
+        roast:
+          `😈 ${next.name} isn't going to complete itself. Your future self is watching.`
+      };
+      message.textContent =
+        styles[
+          settings.coachStyle
+        ] ||
+        styles.motivational;
+    }
+    /* =========================
+       NOTIFICATIONS
+    ========================= */
+    async function requestNotifications() {
+      if (
+        !("Notification" in window)
+      ) {
+        alert(
+          "Notifications are not supported in this browser."
+        );
+        return;
+      }
+      const permission =
+        await Notification.requestPermission();
+      updateNotificationStatus(
+        permission
+      );
+      if (
+        permission === "granted"
+      ) {
+        new Notification(
+          "TaskAI notifications enabled",
+          {
+            body:
+              "I'll help keep you accountable."
+          }
+        );
+      }
+    }
+    function updateNotificationStatus(
+      permission
+    ) {
+      const element =
+        document.getElementById(
+          "notificationStatus"
+        );
+      if (
+        permission === "granted"
+      ) {
+        element.textContent =
+          "🔔 Notifications are enabled.";
+      } else if (
+        permission === "denied"
+      ) {
+        element.textContent =
+          "Notifications are blocked. You can enable them in your iPhone settings.";
+      } else {
+        element.textContent =
+          "Notification permission has not been requested yet.";
+      }
+    }
+    /* =========================
+       TABS
+    ========================= */
+    function showTab(tab) {
+      document
+        .getElementById(
+          "tasksTab"
+        )
+        .classList.add(
+          "hidden"
+        );
+      document
+        .getElementById(
+          "goalsTab"
+        )
+        .classList.add(
+          "hidden"
+        );
+      document
+        .getElementById(
+          "rewardsTab"
+        )
+        .classList.add(
+          "hidden"
+        );
+      document
+        .getElementById(
+          "settingsTab"
+        )
+        .classList.add(
+          "hidden"
+        );
+      document
+        .getElementById(
+          "tabTasks"
+        )
+        .classList.remove(
+          "active"
+        );
+      document
+        .getElementById(
+          "tabGoals"
+        )
+        .classList.remove(
+          "active"
+        );
+      document
+        .getElementById(
+          "tabRewards"
+        )
+        .classList.remove(
+          "active"
+        );
+      document
+        .getElementById(
+          "tabSettings"
+        )
+        .classList.remove(
+          "active"
+        );
+      if (tab === "tasks") {
+        document
+          .getElementById(
+            "tasksTab"
+          )
+          .classList.remove(
+            "hidden"
+          );
+        document
+          .getElementById(
+            "tabTasks"
+          )
+          .classList.add(
+            "active"
+          );
+      }
+      if (tab === "goals") {
+        document
+          .getElementById(
+            "goalsTab"
+          )
+          .classList.remove(
+            "hidden"
+          );
+        document
+          .getElementById(
+            "tabGoals"
+          )
+          .classList.add(
+            "active"
+          );
+        updateGoalDisplay();
+      }
+      if (tab === "rewards") {
+        document
+          .getElementById(
+            "rewardsTab"
+          )
+          .classList.remove(
+            "hidden"
+          );
+        document
+          .getElementById(
+            "tabRewards"
+          )
+          .classList.add(
+            "active"
+          );
+        renderRewards();
+      }
+      if (tab === "settings") {
+        document
+          .getElementById(
+            "settingsTab"
+          )
+          .classList.remove(
+            "hidden"
+          );
+        document
+          .getElementById(
+            "tabSettings"
+          )
+          .classList.add(
+            "active"
+          );
+        loadSettings();
+      }
+    }
+    /* =========================
+       SETTINGS
+    ========================= */
+    function loadSettings() {
+      document
+        .getElementById(
+          "reminderInterval"
+        )
+        .value =
+        settings.reminderInterval;
+      document
+        .getElementById(
+          "maxReminders"
+        )
+        .value =
+        settings.maxReminders;
+      document
+        .getElementById(
+          "coachStyle"
+        )
+        .value =
+        settings.coachStyle;
+      document
+        .getElementById(
+          "quietStart"
+        )
+        .value =
+        settings.quietStart;
+      document
+        .getElementById(
+          "quietEnd"
+        )
+        .value =
+        settings.quietEnd;
+      if (
+        "Notification" in window
+      ) {
+        updateNotificationStatus(
+          Notification.permission
+        );
+      }
+    }
+    /* =========================
+       DASHBOARD
+    ========================= */
+    function updateDashboard() {
+      document
+        .getElementById(
+          "xp"
+        )
+        .textContent =
+        xp;
+      document
+        .getElementById(
+          "streak"
+        )
+        .textContent =
+        streak;
+      document
+        .getElementById(
+          "level"
+        )
+        .textContent =
+        getLevel();
+      const today =
+        todayString();
+      const todayTasks =
+        tasks.filter(
+          t =>
+            t.date === today
+        );
+      const completed =
+        todayTasks.filter(
+          t =>
+            t.completed
+        ).length;
+      const percentage =
+        todayTasks.length
+          ? Math.round(
+              (
+                completed /
+                todayTasks.length
+              ) * 100
+            )
+          : 0;
+      document
+        .getElementById(
+          "todayProgress"
+        )
+        .textContent =
+        percentage + "%";
+    }
+    /* =========================
+       RESET
+    ========================= */
+    function resetApp() {
+      const confirmed =
+        confirm(
+          "Are you sure? This will permanently erase all TaskAI data on this device."
+        );
+      if (!confirmed) {
+        return;
+      }
+      localStorage.clear();
+      location.reload();
+    }
+    /* =========================
+       SECURITY
+    ========================= */
     function escapeHTML(text) {
-
-      const div = document.createElement("div");
-
-      div.textContent = text;
-
+      const div =
+        document.createElement(
+          "div"
+        );
+      div.textContent =
+        text;
       return div.innerHTML;
     }
-
-    taskInput.addEventListener("keydown", function(event) {
-
-      if (event.key === "Enter") {
-        addTask();
-      }
-
-    });
-
+    /* =========================
+       INITIALIZE
+    ========================= */
+    const dateInput =
+      document.getElementById(
+        "taskDate"
+      );
+    dateInput.value =
+      todayString();
+    document
+      .getElementById(
+        "weeklyGoal"
+      )
+      .value =
+      weeklyGoal;
+    document
+      .getElementById(
+        "taskInput"
+      )
+      .addEventListener(
+        "keydown",
+        function(event) {
+          if (
+            event.key === "Enter"
+          ) {
+            addTask();
+          }
+        }
+      );
+    if (
+      "serviceWorker" in navigator
+    ) {
+      window.addEventListener(
+        "load",
+        function() {
+          navigator.serviceWorker
+            .register(
+              "service-worker.js"
+            )
+            .catch(
+              function(error) {
+                console.log(
+                  "Service worker registration failed:",
+                  error
+                );
+              }
+            );
+        }
+      );
+    }
     renderTasks();
+    updateDashboard();
+    updateGoalDisplay();
+    renderRewards();
+    updateCoach();
   </script>
-
 </body>
 </html>
