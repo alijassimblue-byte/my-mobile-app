@@ -54,23 +54,71 @@
     .input-card {
       background: white;
       border-radius: 18px;
-      padding: 14px;
+      padding: 18px;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
       margin-bottom: 22px;
     }
 
     .task-input {
       width: 100%;
-      border: none;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
       outline: none;
       font-size: 17px;
+      padding: 13px;
+      background: #f9fafb;
+      color: #111827;
+      margin-bottom: 14px;
+    }
+
+    .task-input:focus {
+      border-color: #9ca3af;
+    }
+
+    .time-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .time-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .time-input {
+      flex: 1;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
       padding: 12px;
-      background: transparent;
+      font-size: 16px;
+      background: #f9fafb;
       color: #111827;
     }
 
-    .task-input::placeholder {
+    .arrow {
       color: #9ca3af;
+      font-weight: 600;
+    }
+
+    .add-button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      margin-top: 15px;
+      background: #111827;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .add-button:active {
+      transform: scale(0.98);
     }
 
     .section-title {
@@ -108,6 +156,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
     }
 
     .check.completed {
@@ -127,10 +176,10 @@
       word-wrap: break-word;
     }
 
-    .task-date {
-      font-size: 13px;
-      color: #9ca3af;
-      margin-top: 4px;
+    .task-time {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 5px;
     }
 
     .completed .task-name {
@@ -182,6 +231,7 @@
   <main class="container">
 
     <div class="input-card">
+
       <input
         id="taskInput"
         class="task-input"
@@ -189,16 +239,37 @@
         placeholder="What do you need to do?"
         autocomplete="off"
       >
+
+      <label class="time-label">Start Time</label>
+      <input
+        id="startTime"
+        class="time-input"
+        type="time"
+      >
+
+      <div style="height: 12px;"></div>
+
+      <label class="time-label">End Time</label>
+      <input
+        id="endTime"
+        class="time-input"
+        type="time"
+      >
+
+      <button class="add-button" onclick="addTask()">
+        Add Task
+      </button>
+
     </div>
 
-    <h2 class="section-title">Your Tasks</h2>
+    <h2 class="section-title">Your Schedule</h2>
 
     <div id="taskList"></div>
 
     <div class="install-card">
       <h3>📱 Add TaskAI to your Home Screen</h3>
       <p>
-        Tap the Share button in Safari, then choose
+        In Safari, tap the Share button and choose
         <strong>Add to Home Screen</strong>.
       </p>
     </div>
@@ -207,6 +278,8 @@
 
   <script>
     const taskInput = document.getElementById("taskInput");
+    const startTime = document.getElementById("startTime");
+    const endTime = document.getElementById("endTime");
     const taskList = document.getElementById("taskList");
 
     let tasks = JSON.parse(localStorage.getItem("taskai_tasks")) || [];
@@ -215,20 +288,48 @@
       localStorage.setItem("taskai_tasks", JSON.stringify(tasks));
     }
 
+    function formatTime(time) {
+
+      if (!time) {
+        return "No time set";
+      }
+
+      const parts = time.split(":");
+      let hour = parseInt(parts[0]);
+      const minute = parts[1];
+
+      const ampm = hour >= 12 ? "PM" : "AM";
+
+      if (hour === 0) {
+        hour = 12;
+      } else if (hour > 12) {
+        hour -= 12;
+      }
+
+      return hour + ":" + minute + " " + ampm;
+    }
+
     function renderTasks() {
+
       taskList.innerHTML = "";
 
       if (tasks.length === 0) {
+
         taskList.innerHTML = `
           <div class="empty">
             No tasks yet.<br>
             Add your first task above.
           </div>
         `;
+
         return;
       }
 
-      tasks.forEach((task, index) => {
+      tasks.sort(function(a, b) {
+        return a.startTime.localeCompare(b.startTime);
+      });
+
+      tasks.forEach(function(task, index) {
 
         const taskElement = document.createElement("div");
 
@@ -244,8 +345,17 @@
           </div>
 
           <div class="task-content">
-            <div class="task-name">${escapeHTML(task.name)}</div>
-            <div class="task-date">${task.date}</div>
+
+            <div class="task-name">
+              ${escapeHTML(task.name)}
+            </div>
+
+            <div class="task-time">
+              🕐 ${formatTime(task.startTime)}
+              →
+              ${formatTime(task.endTime)}
+            </div>
+
           </div>
 
           <button
@@ -262,29 +372,44 @@
 
     function addTask() {
 
-      const text = taskInput.value.trim();
+      const name = taskInput.value.trim();
+      const start = startTime.value;
+      const end = endTime.value;
 
-      if (text === "") {
+      if (name === "") {
+        alert("Please enter a task.");
+        return;
+      }
+
+      if (start === "") {
+        alert("Please choose a start time.");
+        return;
+      }
+
+      if (end === "") {
+        alert("Please choose an end time.");
+        return;
+      }
+
+      if (end <= start) {
+        alert("The end time must be after the start time.");
         return;
       }
 
       const newTask = {
-        name: text,
-        completed: false,
-        date: new Date().toLocaleDateString(
-          undefined,
-          {
-            month: "short",
-            day: "numeric"
-          }
-        )
+        name: name,
+        startTime: start,
+        endTime: end,
+        completed: false
       };
 
-      tasks.unshift(newTask);
+      tasks.push(newTask);
 
       saveTasks();
 
       taskInput.value = "";
+      startTime.value = "";
+      endTime.value = "";
 
       renderTasks();
     }
